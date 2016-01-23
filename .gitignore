@@ -34,3 +34,6 @@ node_modules
 
 # ignore typings folder
 typings
+
+#build folder
+build
