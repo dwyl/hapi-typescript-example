@@ -37,3 +37,6 @@ typings
 
 #build folder
 build
+
+#Ignore reports
+reports
