@@ -1,5 +1,5 @@
 {
-  "name": "Hapi Typescript Example",
+  "name": "Hapi-Typescript",
   "version": "1.0.0",
   "description": "Hapi project example using typescript.",
   "license": "MIT",
@@ -25,11 +25,11 @@
   "devDependencies": {
     "assert": "^1.3.0",
     "gulp": "^3.9.0",
-    "gulp-clean": "^0.3.1",
     "gulp-help": "^1.6.0",
     "gulp-istanbul": "^0.10.3",
     "gulp-mocha": "^2.1.3",
     "gulp-nodemon": "^2.0.4",
+    "gulp-rimraf": "^0.2.0",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-tslint": "^3.6.0",
     "gulp-typescript": "^2.8.3",
