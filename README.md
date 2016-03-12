@@ -9,14 +9,13 @@ This is a very simple template project for node and typescript projects.
 
 **Run**
 
-* *gulp help* (Show gulp tasks)
 * *gulp build* (Build TS files)
 * *gulp test* (Run mocha tests)
 * *gulp tslint* (Run tslint)
 * *gulp nodemon* (Run nodemon and watch ts files)
 
 
-Running on port 3001 ex: localhost:3001/api/todos
+Running on port 3000 ex: localhost:3000/documentation
 
 
 Have fun :)
