@@ -1,5 +1,7 @@
 # typescript-node
 
+[![Build Status](https://travis-ci.org/dwyl/hapi-typescript-example.svg?branch=master)](https://travis-ci.org/dwyl/hapi-typescript-example)
+
 This is a very simple template project for node and typescript projects.
 
 **Installation**
