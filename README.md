@@ -1,21 +1,23 @@
-# hapi-typescript
+# typescript-node
 
-A simple Todo api using hapi.js and typescript. 
+This is a very simple template project for node and typescript projects.
 
-**How to install**
+**Installation**
 
- - npm install (install node dependencies)
- -  tsd install (install typescript typings)
- -  gulp (runs gulp task [build, nodemon])
+* *npm install* (Install node packages)
+* *typings install* (Install typings)
 
-Open localhost:3000/api/todos and ... voilá!
+**Run**
 
-**Other Gulp Tasks**
+* *gulp help* (Show gulp tasks)
+* *gulp build* (Build TS files)
+* *gulp test* (Run mocha tests)
+* *gulp tslint* (Run tslint)
+* *gulp nodemon* (Run nodemon and watch ts files)
 
- - gulp test (Runs tests and generate *Istanbul* report)
- -  gulp tslint (Runs Ts Linter)
 
-**TODO**
+Running on port 3001 ex: localhost:3001/api/todos
 
- - Create more tests.
- - Add more features like swagger and logging.
+
+Have fun :)
+

@@ -1,54 +1,68 @@
-var gulp = require('gulp')
-require('gulp-help')(gulp)
-var tslint = require('gulp-tslint')
+'use strict'
+
+let gulp = require('gulp')
+let rimraf = require('gulp-rimraf')
+let tsc = require('gulp-typescript')
+let sourcemaps = require('gulp-sourcemaps')
+let tslint = require('gulp-tslint')
+let nodemon = require('gulp-nodemon')
 var mocha = require('gulp-mocha')
 var istanbul = require('gulp-istanbul')
-var rimraf = require('gulp-rimraf')
-var sourcemaps = require('gulp-sourcemaps')
-var ts = require('gulp-typescript')
-var nodemon = require('gulp-nodemon')
 
-var tsconfig = require('./tsconfig')
-var sourceFiles = 'src/**/*.ts'
-var testFiles = 'test/**/*.ts'
-var srcOption = { base: './' }
-var tsProject = ts.createProject('tsconfig.json', {
-  typescript: require('typescript')
-})
-var outDir = tsconfig.compilerOptions.outDir
-var tsFiles = [sourceFiles, testFiles]
+// /*  Variables */
+let tsProject = tsc.createProject('tsconfig.json')
+let sourceFiles = 'src/**/*.ts'
+let testFiles = 'test/**/*.ts'
+let outDir = require('./tsconfig.json').compilerOptions.outDir
+let entryPoint = './build/src/server.js'
 
-gulp.task('clean', 'Clean build folder.', function () {
+/**
+ * Remove build directory.
+ */
+gulp.task('clean', function () {
   return gulp.src(outDir, { read: false })
     .pipe(rimraf())
 })
 
-gulp.task('build', 'Build Ts files.', ['clean'], function () {
-  var tsResult = gulp.src(tsFiles, srcOption)
-    .pipe(sourcemaps.init())
-    .pipe(ts(tsProject))
 
-  return tsResult.js
-    .pipe(sourcemaps.write('.', { includeContent: false, sourceRoot: '../..' }))
-    .pipe(gulp.dest(outDir))
-})
-
-gulp.task('tslint', 'Lints all TypeScript source files.', function () {
-  return gulp.src(tsFiles)
+/**
+ * Lint all custom TypeScript files.
+ */
+gulp.task('tslint', () => {
+  return gulp.src(sourceFiles)
     .pipe(tslint())
     .pipe(tslint.report('verbose'))
 })
 
-gulp.task('nodemon', 'Run nodemon', ['build'], function () {
-  nodemon({
-    script: './build/src/app.js',
-    'legacy-watch': true,
-    watch: [sourceFiles],
-    env: { 'NODE_ENV': 'dev' }
-  }).on('restart', ['build'])
+/**
+ * Compile TypeScript sources and create sourcemaps in build directory.
+ */
+gulp.task('compile', ['clean'], () => {
+  let tsResult = gulp.src([sourceFiles, testFiles])
+    .pipe(sourcemaps.init())
+    .pipe(tsc(tsProject))
+  return tsResult.js
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest(outDir))
 })
 
-gulp.task('test', ['build'], function (cb) {
+/**
+ * Watch for changes in TypeScript, HTML and CSS files.
+ */
+gulp.task('watch', function () {
+  gulp.watch([sourceFiles], ['compile']).on('change', function (e) {
+    console.log('TypeScript file ' + e.path + ' has been changed. Compiling.')
+  })
+})
+
+/**
+ * Build the project.
+ */
+gulp.task('build', ['compile'], () => {
+  console.log('Building the project ...')
+})
+
+gulp.task('test', ['build'], (cb) => {
   gulp.src(['build/src/**/*.js'])
     .pipe(istanbul())
     .pipe(istanbul.hookRequire())
@@ -65,4 +79,10 @@ gulp.task('test', ['build'], function (cb) {
     })
 })
 
-gulp.task('default', 'Default task.', ['nodemon'])
+gulp.task('nodemon', ['build'], () => {
+  nodemon({
+    script: entryPoint,
+    env: { 'NODE_ENV': 'development' },
+    tasks: ['build']
+  })
+})
