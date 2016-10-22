@@ -1,24 +1,30 @@
-# typescript-node
+# typescript-node [![Build Status](https://travis-ci.org/Talento90/typescript-node.svg?branch=master)](https://travis-ci.org/Talento90/typescript-node)
 
-[![Build Status](https://travis-ci.org/dwyl/hapi-typescript-example.svg?branch=master)](https://travis-ci.org/dwyl/hapi-typescript-example)
-
-This is a very simple template project for node and typescript projects.
+Boilerplate template for node and typescript services.
 
 **Installation**
 
-* *npm install* (Install node packages)
-* *typings install* (Install typings)
+* *npm run setup* (install nuget packages & typings)
 
 **Run**
 
-* *gulp build* (Build TS files)
-* *gulp test* (Run mocha tests)
-* *gulp tslint* (Run tslint)
-* *gulp nodemon* (Run nodemon and watch ts files)
+* *gulp build* (build ts files)
+* *gulp test* (run mocha tests)
+* *gulp tslint* (run tslint)
+* *gulp watch* (watch ts files)
+* *npm run start* (start the application)
+* *npm run watch* (restart the application when files change)
 
+**Features**
 
-Running on port 3000 ex: localhost:3000/documentation
+* *Project Structure - Feature oriented*
+* *Hapijs - REST Api*
+* *Swagger - documentation*
+* *Jwt - authentication*
+* *Mongoose - MongoDb*
+* *nconf - configurations*
+* *Unit Tests - chai + sinon + mocha*
 
+Running on port 5000 ex: localhost:5000/docs
 
 Have fun :)
-

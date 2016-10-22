@@ -1,29 +1,38 @@
-/// <reference path="../typings.d.ts" />
-import {IPlugin} from "./libs/plugins/interfaces";
-import Configurations from "./configs/configurations";
 import * as Hapi from "hapi";
-import Routes from "./routes";
-const fs = require('fs');
-const path = require('path');
+import { IPlugin } from "./plugins/interfaces";
+import { IServerConfigurations } from "./configurations";
+import * as Tasks from "./tasks";
+import * as Users from "./users";
+import { IDatabase } from "./database";
 
-var port = process.env.port || Configurations.Server.port;
-var server = new Hapi.Server();
 
-server.connection({ port: port });
+export function init(configs: IServerConfigurations, database: IDatabase) {
+    const port = process.env.port || configs.port;
+    const server = new Hapi.Server();
 
-//  Setup Hapi Plugins
-const pluginsPath = __dirname + '/libs/plugins/';
-const plugins = fs.readdirSync(pluginsPath).filter(file => fs.statSync(path.join(pluginsPath, file)).isDirectory());
+    server.connection({
+        port: port,
+        routes: {
+            cors: true
+        }
+    });
 
-plugins.forEach((pluginName: string) => {
-    var plugin: IPlugin = (require("./libs/plugins/" + pluginName)).default();      
-    console.log(`Register Plugin ${plugin.info().name} v${plugin.info().version}`);
-    plugin.register(server);
-});
+    //  Setup Hapi Plugins
+    const plugins: Array<string> = configs.plugins;
+    const pluginOptions = {
+        database: database,
+        serverConfigs: configs
+    };
 
-//Register Routes
-Routes(server);
+    plugins.forEach((pluginName: string) => {
+        var plugin: IPlugin = (require("./plugins/" + pluginName)).default();
+        console.log(`Register Plugin ${plugin.info().name} v${plugin.info().version}`);
+        plugin.register(server, pluginOptions);
+    });
 
-server.start(function() {
-    console.log('Server running at:', server.info.uri);
-});
+    //Init Features
+    Tasks.init(server, configs, database);
+    Users.init(server, configs, database);
+
+    return server;
+};
