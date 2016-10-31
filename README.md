@@ -1,4 +1,4 @@
-# typescript-node [![Build Status](https://travis-ci.org/Talento90/typescript-node.svg?branch=master)](https://travis-ci.org/Talento90/typescript-node)
+# hapi-typescript-example [![Build Status](https://travis-ci.org/dwyl/hapi-typescript-example.svg?branch=master)](https://travis-ci.org/dwyl/hapi-typescript-example)
 
 Boilerplate template for node and typescript services.
 
