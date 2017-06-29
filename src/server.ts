@@ -41,12 +41,12 @@ export function init(configs: IServerConfigurations, database: IDatabase): Promi
         });
 
         Promise.all(pluginPromises).then(() => {
-            console.log('All plugins registed successfully.');
+            console.log('All plugins registered successfully.');
 
             console.log('Register Routes');
             Tasks.init(server, configs, database);
             Users.init(server, configs, database);
-            console.log('Routes registed sucessfully.');
+            console.log('Routes registered sucessfully.');
 
             resolve(server);
         });
