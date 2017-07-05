@@ -19,8 +19,9 @@ export default class UserController {
     private generateToken(user: IUser) {
         const jwtSecret = this.configs.jwtSecret;
         const jwtExpiration = this.configs.jwtExpiration;
+        const payload = { id: user._id };
 
-        return Jwt.sign({ id: user._id }, jwtSecret, { expiresIn: jwtExpiration });
+        return Jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiration });
     }
 
 
