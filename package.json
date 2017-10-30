@@ -17,7 +17,7 @@
     "tsc-watch": "tsc -w",
     "build": "gulp build",
     "start": "node build/src/index.js",
-    "setup": "npm install & typings install",
+    "setup": "npm install",
     "test": "gulp test",
     "watch": "nodemon --watch build/src build/src/index.js"
   },
