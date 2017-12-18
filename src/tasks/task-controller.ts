@@ -22,7 +22,7 @@ export default class TaskController {
         try {
             let task: ITask = await this.database.taskModel.create(newTask);
             return reply(task).code(201);
-        }catch (error) {
+        } catch (error) {
             return reply(Boom.badImplementation(error));
         }
     }
