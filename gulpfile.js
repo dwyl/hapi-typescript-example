@@ -20,7 +20,7 @@ gulp.task('clean', function () {
  */
 gulp.task('tslint', () => {
   return gulp.src('src/**/*.ts')
-    .pipe(tslint( { 
+    .pipe(tslint({
       formatter: 'prose'
     }))
     .pipe(tslint.report());
@@ -76,13 +76,10 @@ gulp.task('test', ['build'], (cb) => {
 
   gulp.src(['build/test/**/*.js'])
     .pipe(envs)
-    .pipe(mocha())
+    .pipe(mocha({ exit: true }))
     .once('error', (error) => {
       console.log(error);
       process.exit(1);
-    })
-    .once('end', () => {
-      process.exit();
     });
 });
 
