@@ -12,148 +12,133 @@ const assert = chai.assert;
 const serverConfig = Configs.getServerConfigs();
 
 describe("UserController Tests", () => {
+  let server;
 
-    let server;
+  before(done => {
+    Server.init(serverConfig, database).then(s => {
+      server = s;
+      done();
+    });
+  });
 
-    before((done) => {
-        Server.init(serverConfig, database).then((s) => {
-            server = s;
-            done();
-        });
+  beforeEach(done => {
+    Utils.createSeedUserData(database, done);
+  });
+
+  afterEach(done => {
+    Utils.clearDatabase(database, done);
+  });
+
+  it("Create user", async () => {
+    var user = {
+      email: "user@mail.com",
+      name: "John Robot",
+      password: "123123"
+    };
+
+    const res = await server.inject({
+      method: "POST",
+      url: serverConfig.routePrefix + "/users",
+      payload: user
     });
 
-    beforeEach((done) => {
-        Utils.createSeedUserData(database, done);
+    var responseBody: any = JSON.parse(res.payload);
+    assert.equal(201, res.statusCode);
+    assert.isNotNull(responseBody.token);
+  });
+
+  it("Create user invalid data", async () => {
+    var user = {
+      email: "user",
+      name: "John Robot",
+      password: "123123"
+    };
+
+    const res = await server.inject({
+      method: "POST",
+      url: serverConfig.routePrefix + "/users",
+      payload: user
     });
 
-    afterEach((done) => {
-        Utils.clearDatabase(database, done);
+    assert.equal(400, res.statusCode);
+  });
+
+  it("Create user with same email", async () => {
+    const res = await server.inject({
+      method: "POST",
+      url: serverConfig.routePrefix + "/users",
+      payload: Utils.createUserDummy()
     });
 
-    it("Create user", (done) => {
-        var user = {
-            email: "user@mail.com",
-            name: "John Robot",
-            password: "123123"
-        };
+    assert.equal(500, res.statusCode);
+  });
 
-        server.inject({ method: 'POST', url: serverConfig.routePrefix + '/users', payload: user }, (res) => {
-            assert.equal(201, res.statusCode);
-            var responseBody: any = JSON.parse(res.payload);
-            assert.isNotNull(responseBody.token);
-            done();
-        });
+  it("Get user Info", async () => {
+    var user = Utils.createUserDummy();
+
+    const loginResponse = await Utils.login(server, serverConfig, user);
+    assert.equal(200, loginResponse.statusCode);
+    var login: any = JSON.parse(loginResponse.payload);
+
+    const res = await server.inject({
+      method: "GET",
+      url: serverConfig.routePrefix + "/users/info",
+      headers: { authorization: login.token }
     });
 
-    it("Create user invalid data", (done) => {
-        var user = {
-            email: "user",
-            name: "John Robot",
-            password: "123123"
-        };
+    var responseBody: IUser = <IUser>JSON.parse(res.payload);
+    assert.equal(200, res.statusCode);
+    assert.equal(user.email, responseBody.email);
+  });
 
-        server.inject({ method: 'POST', url: serverConfig.routePrefix + '/users', payload: user }, (res) => {
-            assert.equal(400, res.statusCode);
-            done();
-        });
+  it("Get User Info Unauthorized", async () => {
+    const res = await server.inject({
+      method: "GET",
+      url: serverConfig.routePrefix + "/users/info",
+      headers: { authorization: "dummy token" }
     });
 
-    it("Create user with same email", (done) => {
-        server.inject({ method: 'POST', url: serverConfig.routePrefix + '/users', payload: Utils.createUserDummy() }, (res) => {
-            assert.equal(500, res.statusCode);
-            done();
-        });
+    assert.equal(401, res.statusCode);
+  });
+
+  it("Delete user", async () => {
+    var user = Utils.createUserDummy();
+
+    const loginResponse = await Utils.login(server, serverConfig, user);
+    assert.equal(200, loginResponse.statusCode);
+    var login: any = JSON.parse(loginResponse.payload);
+
+    const res = await server.inject({
+      method: "DELETE",
+      url: serverConfig.routePrefix + "/users",
+      headers: { authorization: login.token }
     });
 
-    it("Get user Info", (done) => {
-        var user = Utils.createUserDummy();
+    assert.equal(200, res.statusCode);
+    var responseBody: IUser = <IUser>JSON.parse(res.payload);
+    assert.equal(user.email, responseBody.email);
 
-        server.inject({
-            method: 'POST',
-            url: serverConfig.routePrefix + '/users/login',
-            payload: {
-                email: user.email, password: user.password
-            }
-        }, (res) => {
-            assert.equal(200, res.statusCode);
-            var login: any = JSON.parse(res.payload);
+    const deletedUser = await database.userModel.findOne({ email: user.email });
+    assert.isNull(deletedUser);
+  });
 
-            server.inject({
-                method: 'GET',
-                url: serverConfig.routePrefix + '/users/info',
-                headers: { "authorization": login.token }
-            }, (res) => {
-                assert.equal(200, res.statusCode);
-                var responseBody: IUser = <IUser>JSON.parse(res.payload);
-                assert.equal(user.email, responseBody.email);
-                done();
-            });
-        });
+  it("Update user info", async () => {
+    var user = Utils.createUserDummy();
+
+    const loginResponse = await Utils.login(server, serverConfig, user);
+    assert.equal(200, loginResponse.statusCode);
+    var login: any = JSON.parse(loginResponse.payload);
+    var updateUser = { name: "New Name" };
+
+    const res = await server.inject({
+      method: "PUT",
+      url: serverConfig.routePrefix + "/users",
+      payload: updateUser,
+      headers: { authorization: login.token }
     });
 
-    it("Get User Info Unauthorized", (done) => {
-        server.inject({
-            method: 'GET',
-            url: serverConfig.routePrefix + '/users/info',
-            headers: { "authorization": "dummy token" }
-        }, (res) => {
-            assert.equal(401, res.statusCode);
-            done();
-        });
-    });
-
-
-    it("Delete user", (done) => {
-        var user = Utils.createUserDummy();
-
-        server.inject({
-            method: 'POST',
-            url: serverConfig.routePrefix + '/users/login',
-            payload: { email: user.email, password: user.password }
-        }, (res) => {
-            assert.equal(200, res.statusCode);
-            var login: any = JSON.parse(res.payload);
-
-            server.inject({
-                method: 'DELETE',
-                url: serverConfig.routePrefix + '/users',
-                headers: { "authorization": login.token }
-            }, (res) => {
-                assert.equal(200, res.statusCode);
-                var responseBody: IUser = <IUser>JSON.parse(res.payload);
-                assert.equal(user.email, responseBody.email);
-
-                database.userModel.findOne({ "email": user.email }).then((deletedUser) => {
-                    assert.isNull(deletedUser);
-                    done();
-                });
-            });
-        });
-    });
-
-    it("Update user info", (done) => {
-        var user = Utils.createUserDummy();
-
-        server.inject({
-            method: 'POST',
-            url: serverConfig.routePrefix + '/users/login',
-            payload: { email: user.email, password: user.password }
-        }, (res) => {
-            assert.equal(200, res.statusCode);
-            var login: any = JSON.parse(res.payload);
-            var updateUser = { name: "New Name" };
-
-            server.inject({
-                method: 'PUT',
-                url: serverConfig.routePrefix + '/users',
-                payload: updateUser,
-                headers: { "authorization": login.token }
-            }, (res) => {
-                assert.equal(200, res.statusCode);
-                var responseBody: IUser = <IUser>JSON.parse(res.payload);
-                assert.equal("New Name", responseBody.name);
-                done();
-            });
-        });
-    });
+    var responseBody: IUser = <IUser>JSON.parse(res.payload);
+    assert.equal(200, res.statusCode);
+    assert.equal("New Name", responseBody.name);
+  });
 });
