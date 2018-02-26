@@ -22,7 +22,6 @@
     "watch": "nodemon --watch build/src build/src/index.js"
   },
   "dependencies": {
-    "@salzhrani/hapi-auth-jwt2": "^7.3.0",
     "bcryptjs": "^2.4.3",
     "boom": "~7.1.0",
     "fs": "0.0.1-security",
@@ -30,6 +29,7 @@
     "good-console": "^7.0.1",
     "good-squeeze": "^5.0.2",
     "hapi": "17.2.0",
+    "hapi-auth-jwt2": "^8.0.0",
     "hapi-swagger": "^9.1.1",
     "inert": "~5.1.0",
     "joi": "~13.1.2",

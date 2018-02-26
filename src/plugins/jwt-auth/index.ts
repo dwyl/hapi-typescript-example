@@ -17,7 +17,7 @@ const register = async (server: Hapi.Server, options: IPluginOptions): Promise<v
             return { isValid: true };
         };
 
-        await server.register(require('@salzhrani/hapi-auth-jwt2'));
+        await server.register(require('hapi-auth-jwt2'));
 
         return setAuthStrategy(server, {
             config: serverConfig,
