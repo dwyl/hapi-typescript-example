@@ -95,6 +95,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         path: '/users',
         config: {
             handler: userController.createUser,
+            auth: false,
             tags: ['api', 'users'],
             description: 'Create a user.',
             validate: {
@@ -117,6 +118,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
         path: '/users/login',
         config: {
             handler: userController.loginUser,
+            auth: false,
             tags: ['api', 'users'],
             description: 'Login a user.',
             validate: {

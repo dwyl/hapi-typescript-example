@@ -1,50 +1,55 @@
-import { IPlugin, IPluginOptions } from "../interfaces";
-import * as Hapi from "hapi";
-import { IUser, UserModel } from "../../users/user";
+import { IPlugin, IPluginOptions } from '../interfaces';
+import * as Hapi from 'hapi';
+import { IUser, UserModel } from '../../users/user';
+import { IRequest } from '../../interfaces/request';
+
+const register = async (server: Hapi.Server, options: IPluginOptions): Promise<void> => {
+    try {
+        const database = options.database;
+        const serverConfig = options.serverConfigs;
+
+        const validateUser = async (decoded: any, request: IRequest, h: Hapi.ResponseToolkit) => {
+            const user = await database.userModel.findById(decoded.id).lean(true);
+            if (!user) {
+                return { isValid: false };
+            }
+
+            return { isValid: true };
+        };
+
+        await server.register(require('hapi-auth-jwt2'));
+
+        return setAuthStrategy(server, {
+            config: serverConfig,
+            validate: validateUser
+        });
+
+    } catch (err) {
+        console.log(`Error registering jwt plugin: ${err}`);
+        throw err;
+    }
+};
+
+const setAuthStrategy = async (server, { config, validate }) => {
+    server.auth.strategy('jwt', 'jwt', {
+        key: config.jwtSecret,
+        validate,
+        verifyOptions: { algorithms: ['HS256'] }
+    });
+
+    server.auth.default('jwt');
+
+    return;
+};
 
 export default (): IPlugin => {
     return {
-        register: (server: Hapi.Server, options: IPluginOptions): Promise<void> => {
-            const database = options.database;
-            const serverConfig = options.serverConfigs;
-
-            const validateUser = (decoded, request, cb) => {
-                database.userModel.findById(decoded.id).lean(true)
-                    .then((user: IUser) => {
-                        if (!user) {
-                            return cb(null, false);
-                        }
-
-                        return cb(null, true);
-                    });
-            };
-
-            return new Promise<void>((resolve) => {
-                server.register({
-                    register: require('hapi-auth-jwt2')
-                }, (error) => {
-                    if (error) {
-                        console.log(`Error registering jwt plugin: ${error}`);
-                    } else {
-                        server.auth.strategy('jwt', 'jwt', false,
-                            {
-                                key: serverConfig.jwtSecret,
-                                validateFunc: validateUser,
-                                verifyOptions: { algorithms: ['HS256'] }
-                            });
-                    }
-
-                    resolve();
-                });
-            });
-        },
+        register,
         info: () => {
             return {
-                name: "JWT Authentication",
-                version: "1.0.0"
+                name: 'JWT Authentication',
+                version: '1.0.0'
             };
         }
     };
 };
-
-

@@ -1,11 +1,11 @@
-import * as Hapi from "hapi";
-import * as Boom from "boom";
-import { ITask } from "./task";
-import { IDatabase } from "../database";
-import { IServerConfigurations } from "../configurations";
+import * as Hapi from 'hapi';
+import * as Boom from 'boom';
+import { ITask } from './task';
+import { IDatabase } from '../database';
+import { IServerConfigurations } from '../configurations';
+import { IRequest } from '../interfaces/request';
 
 export default class TaskController {
-
     private database: IDatabase;
     private configs: IServerConfigurations;
 
@@ -14,22 +14,21 @@ export default class TaskController {
         this.database = database;
     }
 
-    public async createTask(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        let userId = request.auth.credentials.id;
-        var newTask: ITask = request.payload;
-        newTask.userId = userId;
+    public async createTask(request: IRequest, h: Hapi.ResponseToolkit) {
+        var newTask: ITask = <ITask>request.payload;
+        newTask.userId = request.auth.credentials.id;
 
         try {
             let task: ITask = await this.database.taskModel.create(newTask);
-            return reply(task).code(201);
+            return h.response(task).code(201);
         } catch (error) {
-            return reply(Boom.badImplementation(error));
+            return Boom.badImplementation(error);
         }
     }
 
-    public async updateTask(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+    public async updateTask(request: IRequest, h: Hapi.ResponseToolkit) {
         let userId = request.auth.credentials.id;
-        let id = request.params["id"];
+        let id = request.params['id'];
 
         try {
             let task: ITask = await this.database.taskModel.findByIdAndUpdate(
@@ -39,48 +38,56 @@ export default class TaskController {
             );
 
             if (task) {
-                reply(task);
+                return task;
             } else {
-                reply(Boom.notFound());
+                return Boom.notFound();
             }
-
         } catch (error) {
-            return reply(Boom.badImplementation(error));
+            return Boom.badImplementation(error);
         }
     }
 
-    public async deleteTask(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
-        let id = request.params["id"];
+    public async deleteTask(request: IRequest, h: Hapi.ResponseToolkit) {
+        let id = request.params['id'];
         let userId = request.auth.credentials.id;
 
-        let deletedTask = await this.database.taskModel.findOneAndRemove({ _id: id, userId: userId });
+        let deletedTask = await this.database.taskModel.findOneAndRemove({
+            _id: id,
+            userId: userId
+        });
 
         if (deletedTask) {
-            return reply(deletedTask);
+            return deletedTask;
         } else {
-            return reply(Boom.notFound());
+            return Boom.notFound();
         }
     }
 
-    public async getTaskById(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+    public async getTaskById(request: IRequest, h: Hapi.ResponseToolkit) {
         let userId = request.auth.credentials.id;
-        let id = request.params["id"];
+        let id = request.params['id'];
 
-        let task = await this.database.taskModel.findOne({ _id: id, userId: userId }).lean(true);
+        let task = await this.database.taskModel
+            .findOne({ _id: id, userId: userId })
+            .lean(true);
 
         if (task) {
-            reply(task);
+            return task;
         } else {
-            reply(Boom.notFound());
+            return Boom.notFound();
         }
     }
 
-    public async getTasks(request: Hapi.Request, reply: Hapi.ReplyNoContinue) {
+    public async getTasks(request: IRequest, h: Hapi.ResponseToolkit) {
         let userId = request.auth.credentials.id;
         let top = request.query['top'];
         let skip = request.query['skip'];
-        let tasks = await this.database.taskModel.find({ userId: userId }).lean(true).skip(skip).limit(top);
+        let tasks = await this.database.taskModel
+            .find({ userId: userId })
+            .lean(true)
+            .skip(skip)
+            .limit(top);
 
-        return reply(tasks);
+        return tasks;
     }
 }

@@ -1,8 +1,7 @@
 language: node_js
 node_js:
-  - "7"
-before_script:
-  - npm install -g typescript
-  - npm install -g gulp
+  - "8"
+before_install:
+  - nvm install "$(jq -r '.engines.node' package.json)"
 services:
   - mongodb
