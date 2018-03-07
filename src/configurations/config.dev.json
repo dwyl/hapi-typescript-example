@@ -1,16 +1,12 @@
 {
-    "database": {
-        "connectionString": "mongodb://localhost:27017/taskdb-dev"
-    },
-    "server": {
-        "port": 5000,
-        "jwtSecret": "random-secret-password",
-        "jwtExpiration": "1h",
-        "routePrefix": "",
-        "plugins": [
-            "logger",
-            "jwt-auth",
-            "swagger"
-        ]
-    }
+  "database": {
+    "connectionString": "mongodb://localhost:27017/taskdb-dev"
+  },
+  "server": {
+    "port": 5000,
+    "jwtSecret": "random-secret-password",
+    "jwtExpiration": "1h",
+    "routePrefix": "",
+    "plugins": ["logger", "jwt-auth", "swagger"]
+  }
 }

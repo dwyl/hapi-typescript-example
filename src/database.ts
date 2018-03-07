@@ -4,27 +4,26 @@ import { IUser, UserModel } from "./api/users/user";
 import { ITask, TaskModel } from "./api/tasks/task";
 
 export interface IDatabase {
-    userModel: Mongoose.Model<IUser>;
-    taskModel: Mongoose.Model<ITask>;
+  userModel: Mongoose.Model<IUser>;
+  taskModel: Mongoose.Model<ITask>;
 }
 
 export function init(config: IDataConfiguration): IDatabase {
+  (<any>Mongoose).Promise = Promise;
+  Mongoose.connect(process.env.MONGO_URL || config.connectionString);
 
-    (<any>Mongoose).Promise = Promise;
-    Mongoose.connect(process.env.MONGO_URL || config.connectionString);
+  let mongoDb = Mongoose.connection;
 
-    let mongoDb = Mongoose.connection;
+  mongoDb.on("error", () => {
+    console.log(`Unable to connect to database: ${config.connectionString}`);
+  });
 
-    mongoDb.on('error', () => {
-        console.log(`Unable to connect to database: ${config.connectionString}`);
-    });
+  mongoDb.once("open", () => {
+    console.log(`Connected to database: ${config.connectionString}`);
+  });
 
-    mongoDb.once('open', () => {
-        console.log(`Connected to database: ${config.connectionString}`);
-    });
-
-    return {
-        taskModel: TaskModel,
-        userModel: UserModel
-    };
+  return {
+    taskModel: TaskModel,
+    userModel: UserModel
+  };
 }

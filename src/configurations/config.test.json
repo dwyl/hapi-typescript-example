@@ -7,9 +7,6 @@
     "jwtSecret": "random-secret-password",
     "jwtExpiration": "1h",
     "routePrefix": "",
-    "plugins": [
-      "logger",
-      "jwt-auth"
-    ]
+    "plugins": ["logger", "jwt-auth"]
   }
 }

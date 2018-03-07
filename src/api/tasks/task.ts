@@ -9,13 +9,16 @@ export interface ITask extends Mongoose.Document {
   updateAt: Date;
 }
 
-export const TaskSchema = new Mongoose.Schema({
-  userId: { type: String, required: true },
-  name: { type: String, required: true },
-  description: String,
-  completed: Boolean
-}, {
+export const TaskSchema = new Mongoose.Schema(
+  {
+    userId: { type: String, required: true },
+    name: { type: String, required: true },
+    description: String,
+    completed: Boolean
+  },
+  {
     timestamps: true
-  });
+  }
+);
 
-export const TaskModel = Mongoose.model<ITask>('Task', TaskSchema);
+export const TaskModel = Mongoose.model<ITask>("Task", TaskSchema);

@@ -7,11 +7,7 @@
     "url": "https://github.com/dwyl/hapi-typescript-example.git"
   },
   "author": "Talento90",
-  "keywords": [
-    "typescript",
-    "project structure",
-    "nodejs"
-  ],
+  "keywords": ["typescript", "project structure", "nodejs"],
   "scripts": {
     "tsc": "tsc",
     "tsc-watch": "tsc -w",
@@ -24,6 +20,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "boom": "~7.2.0",
+    "eslint": "^4.18.2",
     "fs": "0.0.1-security",
     "good": "^8.1.0",
     "good-console": "^7.1.0",
