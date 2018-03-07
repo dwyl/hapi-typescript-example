@@ -1,6 +1,6 @@
 import { IPlugin, IPluginOptions } from '../interfaces';
 import * as Hapi from 'hapi';
-import { IUser, UserModel } from '../../users/user';
+import { IUser, UserModel } from '../../api/users/user';
 import { IRequest } from '../../interfaces/request';
 
 const register = async (server: Hapi.Server, options: IPluginOptions): Promise<void> => {

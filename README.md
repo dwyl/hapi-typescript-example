@@ -25,6 +25,6 @@ Boilerplate template for node and typescript services.
 * *nconf - configurations*
 * *Unit Tests - chai + sinon + mocha*
 
-Running on port 5000 ex: localhost:5000/api/docs
+Running on port 5000 ex: localhost:5000/docs
 
 Have fun :)

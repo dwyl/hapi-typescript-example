@@ -2,9 +2,9 @@ import * as Hapi from 'hapi';
 import * as Boom from 'boom';
 import * as Jwt from 'jsonwebtoken';
 import { IUser } from './user';
-import { IDatabase } from '../database';
-import { IServerConfigurations } from '../configurations';
-import { IRequest, ILoginRequest } from '../interfaces/request';
+import { IDatabase } from '../../database';
+import { IServerConfigurations } from '../../configurations';
+import { IRequest, ILoginRequest } from '../../interfaces/request';
 
 export default class UserController {
     private database: IDatabase;

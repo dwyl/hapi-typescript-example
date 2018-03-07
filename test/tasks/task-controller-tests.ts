@@ -1,7 +1,7 @@
 import * as chai from "chai";
-import TaskController from "../../src/tasks/task-controller";
-import { ITask } from "../../src/tasks/task";
-import { IUser } from "../../src/users/user";
+import TaskController from "../../src/api/tasks/task-controller";
+import { ITask } from "../../src/api/tasks/task";
+import { IUser } from "../../src/api/users/user";
 import * as Configs from "../../src/configurations";
 import * as Server from "../../src/server";
 import * as Database from "../../src/database";

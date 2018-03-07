@@ -3,8 +3,8 @@ import * as Joi from "joi";
 import TaskController from "./task-controller";
 import * as TaskValidator from "./task-validator";
 import { jwtValidator } from "../users/user-validator";
-import { IDatabase } from "../database";
-import { IServerConfigurations } from "../configurations";
+import { IDatabase } from "../../database";
+import { IServerConfigurations } from "../../configurations";
 
 export default function (server: Hapi.Server, configs: IServerConfigurations, database: IDatabase) {
 
@@ -14,7 +14,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     server.route({
         method: 'GET',
         path: '/tasks/{id}',
-        config: {
+        options: {
             handler: taskController.getTaskById,
             auth: "jwt",
             tags: ['api', 'tasks'],
@@ -43,7 +43,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     server.route({
         method: 'GET',
         path: '/tasks',
-        config: {
+        options: {
             handler: taskController.getTasks,
             auth: "jwt",
             tags: ['api', 'tasks'],
@@ -61,7 +61,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     server.route({
         method: 'DELETE',
         path: '/tasks/{id}',
-        config: {
+        options: {
             handler: taskController.deleteTask,
             auth: "jwt",
             tags: ['api', 'tasks'],
@@ -90,7 +90,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     server.route({
         method: 'PUT',
         path: '/tasks/{id}',
-        config: {
+        options: {
             handler: taskController.updateTask,
             auth: "jwt",
             tags: ['api', 'tasks'],
@@ -120,7 +120,7 @@ export default function (server: Hapi.Server, configs: IServerConfigurations, da
     server.route({
         method: 'POST',
         path: '/tasks',
-        config: {
+        options: {
             handler: taskController.createTask,
             auth: "jwt",
             tags: ['api', 'tasks'],

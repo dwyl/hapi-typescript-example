@@ -1,9 +1,9 @@
 import * as Hapi from 'hapi';
 import * as Boom from 'boom';
 import { ITask } from './task';
-import { IDatabase } from '../database';
-import { IServerConfigurations } from '../configurations';
-import { IRequest } from '../interfaces/request';
+import { IDatabase } from '../../database';
+import { IServerConfigurations } from '../../configurations';
+import { IRequest } from '../../interfaces/request';
 
 export default class TaskController {
     private database: IDatabase;

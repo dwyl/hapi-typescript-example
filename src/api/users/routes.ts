@@ -3,8 +3,8 @@ import * as Joi from "joi";
 import UserController from "./user-controller";
 import { UserModel } from "./user";
 import * as UserValidator from "./user-validator";
-import { IDatabase } from "../database";
-import { IServerConfigurations } from "../configurations";
+import { IDatabase } from "../../database";
+import { IServerConfigurations } from "../../configurations";
 
 export default function (server: Hapi.Server, serverConfigs: IServerConfigurations, database: IDatabase) {
 
@@ -14,7 +14,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
     server.route({
         method: 'GET',
         path: '/users/info',
-        config: {
+        options: {
             handler: userController.infoUser,
             auth: "jwt",
             tags: ['api', 'users'],
@@ -40,7 +40,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
     server.route({
         method: 'DELETE',
         path: '/users',
-        config: {
+        options: {
             handler: userController.deleteUser,
             auth: "jwt",
             tags: ['api', 'users'],
@@ -66,7 +66,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
     server.route({
         method: 'PUT',
         path: '/users',
-        config: {
+        options: {
             handler: userController.updateUser,
             auth: "jwt",
             tags: ['api', 'users'],
@@ -93,7 +93,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
     server.route({
         method: 'POST',
         path: '/users',
-        config: {
+        options: {
             handler: userController.createUser,
             auth: false,
             tags: ['api', 'users'],
@@ -116,7 +116,7 @@ export default function (server: Hapi.Server, serverConfigs: IServerConfiguratio
     server.route({
         method: 'POST',
         path: '/users/login',
-        config: {
+        options: {
             handler: userController.loginUser,
             auth: false,
             tags: ['api', 'users'],
