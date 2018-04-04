@@ -2,6 +2,7 @@ import * as Hapi from "hapi";
 import * as Boom from "boom";
 import { IPlugin } from "./plugins/interfaces";
 import { IServerConfigurations } from "./configurations";
+import * as Logs from "./api/logs";
 import * as Tasks from "./api/tasks";
 import * as Users from "./api/users";
 import { IDatabase } from "./database";
@@ -13,6 +14,7 @@ export async function init(
   try {
     const port = process.env.PORT || configs.port;
     const server = new Hapi.Server({
+      debug: { request: ['error'] },
       port: port,
       routes: {
         cors: {
@@ -47,6 +49,7 @@ export async function init(
     console.log("All plugins registered successfully.");
 
     console.log("Register Routes");
+    Logs.init(server, configs, database);
     Tasks.init(server, configs, database);
     Users.init(server, configs, database);
     console.log("Routes registered sucessfully.");

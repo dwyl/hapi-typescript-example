@@ -6,13 +6,24 @@ import { jwtValidator } from "../users/user-validator";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 
-export default function(
+export default function (
   server: Hapi.Server,
   configs: IServerConfigurations,
   database: IDatabase
 ) {
   const taskController = new TaskController(configs, database);
   server.bind(taskController);
+
+  server.route({
+    method: 'GET',
+    path: '/tasks/test',
+    options: {
+      handler: taskController.testing,
+      auth: false,
+      tags: ['api', 'Helpers'],
+      description: 'Testing API Helpers',
+    }
+  });
 
   server.route({
     method: "GET",

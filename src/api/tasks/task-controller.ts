@@ -4,6 +4,10 @@ import { ITask } from "./task";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import { IRequest } from "../../interfaces/request";
+import { ILogs } from "../logs/logs";
+
+//Custom helper module
+import * as Helper from "../../utils/helper";
 
 export default class TaskController {
   private database: IDatabase;
@@ -12,6 +16,21 @@ export default class TaskController {
   constructor(configs: IServerConfigurations, database: IDatabase) {
     this.configs = configs;
     this.database = database;
+  }
+
+  public async testing(request: IRequest, h: Hapi.ResponseToolkit) {
+    let profile: any = {
+      _id: "AnkitJain"
+    };
+
+    //Logging user request
+    Helper.dbLogger("UserID", `Validate email payload ${JSON.stringify(profile)}`, "This is a request");
+    let res: any = await Helper.validateEmailDomain("ankit@live.com");
+
+    //Logging user request response
+    Helper.dbLogger("UserID", `Validate email payload reponse ${JSON.stringify(res)}`, "This is a response");
+
+    return h.response(res).code(200);
   }
 
   public async createTask(request: IRequest, h: Hapi.ResponseToolkit) {
@@ -28,11 +47,11 @@ export default class TaskController {
 
   public async updateTask(request: IRequest, h: Hapi.ResponseToolkit) {
     let userId = request.auth.credentials.id;
-    let id = request.params["id"];
+    let _id = request.params["id"];
 
     try {
       let task: ITask = await this.database.taskModel.findByIdAndUpdate(
-        { _id: id, userId: userId },
+        { _id, userId }, //ES6 shorthand syntax
         { $set: request.payload },
         { new: true }
       );
@@ -49,7 +68,7 @@ export default class TaskController {
 
   public async deleteTask(request: IRequest, h: Hapi.ResponseToolkit) {
     let id = request.params["id"];
-    let userId = request.auth.credentials.id;
+    let userId = request["auth"]["credentials"];
 
     let deletedTask = await this.database.taskModel.findOneAndRemove({
       _id: id,
@@ -65,10 +84,9 @@ export default class TaskController {
 
   public async getTaskById(request: IRequest, h: Hapi.ResponseToolkit) {
     let userId = request.auth.credentials.id;
-    let id = request.params["id"];
+    let _id = request.params["id"];
 
-    let task = await this.database.taskModel
-      .findOne({ _id: id, userId: userId })
+    let task = await this.database.taskModel.findOne({ _id, userId })
       .lean(true);
 
     if (task) {

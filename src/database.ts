@@ -1,9 +1,11 @@
 import * as Mongoose from "mongoose";
 import { IDataConfiguration } from "./configurations";
+import { ILogs, LogModel } from "./api/logs/logs";
 import { IUser, UserModel } from "./api/users/user";
 import { ITask, TaskModel } from "./api/tasks/task";
 
 export interface IDatabase {
+  logModel: Mongoose.Model<ILogs>;
   userModel: Mongoose.Model<IUser>;
   taskModel: Mongoose.Model<ITask>;
 }
@@ -23,6 +25,7 @@ export function init(config: IDataConfiguration): IDatabase {
   });
 
   return {
+    logModel: LogModel,
     taskModel: TaskModel,
     userModel: UserModel
   };
