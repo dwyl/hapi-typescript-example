@@ -40,7 +40,7 @@ UserSchema.pre("save", function(next) {
     return next();
   }
 
-  user.password = hashPassword(user.password);
+  user["password"] = hashPassword(user["password"]);
 
   return next();
 });

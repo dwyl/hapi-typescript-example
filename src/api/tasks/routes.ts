@@ -15,17 +15,6 @@ export default function (
   server.bind(taskController);
 
   server.route({
-    method: 'GET',
-    path: '/tasks/test',
-    options: {
-      handler: taskController.testing,
-      auth: false,
-      tags: ['api', 'Helpers'],
-      description: 'Testing API Helpers',
-    }
-  });
-
-  server.route({
     method: "GET",
     path: "/tasks/{id}",
     options: {

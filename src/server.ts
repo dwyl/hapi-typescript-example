@@ -2,7 +2,7 @@ import * as Hapi from "hapi";
 import * as Boom from "boom";
 import { IPlugin } from "./plugins/interfaces";
 import { IServerConfigurations } from "./configurations";
-import * as Logs from "./api/logs";
+import * as Logs from "./plugins/logging";
 import * as Tasks from "./api/tasks";
 import * as Users from "./api/users";
 import { IDatabase } from "./database";

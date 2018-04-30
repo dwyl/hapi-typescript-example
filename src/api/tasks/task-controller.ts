@@ -4,7 +4,7 @@ import { ITask } from "./task";
 import { IDatabase } from "../../database";
 import { IServerConfigurations } from "../../configurations";
 import { IRequest } from "../../interfaces/request";
-import { ILogs } from "../logs/logs";
+import { ILogging } from "../../plugins/logging/logging";
 
 //Custom helper module
 import * as Helper from "../../utils/helper";
@@ -16,21 +16,6 @@ export default class TaskController {
   constructor(configs: IServerConfigurations, database: IDatabase) {
     this.configs = configs;
     this.database = database;
-  }
-
-  public async testing(request: IRequest, h: Hapi.ResponseToolkit) {
-    let profile: any = {
-      _id: "AnkitJain"
-    };
-
-    //Logging user request
-    Helper.dbLogger("UserID", `Validate email payload ${JSON.stringify(profile)}`, "This is a request");
-    let res: any = await Helper.validateEmailDomain("ankit@live.com");
-
-    //Logging user request response
-    Helper.dbLogger("UserID", `Validate email payload reponse ${JSON.stringify(res)}`, "This is a response");
-
-    return h.response(res).code(200);
   }
 
   public async createTask(request: IRequest, h: Hapi.ResponseToolkit) {

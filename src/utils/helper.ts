@@ -1,29 +1,16 @@
 import * as Jwt from "jsonwebtoken";
 import * as Mongoose from "mongoose";
 import { getDatabaseConfig, getServerConfigs, IServerConfigurations } from "../configurations";
-import { LogModel } from "../api/logs/logs";
+import { LoggingModel } from "../plugins/logging/logging";
 import * as Boom from "boom";
 
 let config: any = getServerConfigs();
-
-//Blacklisted domains lists
-//Which is not allowed at our platform
-let blackListDomains: any = [
-    "gmail.com",
-    "rediffmail.com",
-    "outlook.com",
-    "live.com",
-    "hotmail.com",
-    "yahoomail.com",
-    "ymail.com",
-    "yahoo.co.in",
-    "yahoo.co.uk"];
 
 //Database logging async call for storing users logs
 export const dbLogger = async (userId: string, payload: string, response: string) => {
 
     // create a new log
-    var newLog = new LogModel({ userId, payload, response });
+    var newLog = new LoggingModel({ userId, payload, response });
 
     try {
         newLog.save();
@@ -39,82 +26,6 @@ export const generateToken = (user: any) => {
     const jwtExpiration = config.jwtExpiration;
     const payload = { id: user["_id"] };
     return Jwt.sign(payload, jwtSecret, { expiresIn: jwtExpiration });
-};
-
-//To generate 5 digit numeric OTP
-export const generateNumericOTP = () => {
-    return Math.floor(Math.random() * 90000) + 10000;
-};
-
-//To generate 5 digit alpha numeric OTP (exluding letters like 'i, I' since it creates issue for users in terms of reading)
-export const generateAlphaNumericOTP = () => {
-    let verificationCode = "";
-    let charset = "abcdefghjkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ234567890";
-    for (let i = 0; i < 5; i++) {
-        verificationCode += charset.charAt(Math.floor(Math.random() * charset.length));
-    }
-    return verificationCode;
-};
-
-
-//Validate member email format via comparing it from available blacklist
-export const validateEmailDomain = async (email: string) => {
-
-    let domainResponse = await this.getEmailDomain(email);
-    let responseSet: any = {};
-
-    //Checking returing isCurrentDomain reponse statusCode to validate isCurrentDomain status
-    //Handling if only since else will always be true, hence capturing false flag only
-
-    if (!domainResponse["statusCode"]) {
-        return domainResponse;
-    }
-
-    //To check email domain in blacklisted domains
-    for (let i = 0; i < blackListDomains.length; i++) {
-
-        //Preparing fallback response and returning it to its parent call
-        if (blackListDomains[i] === domainResponse["emailDomain"]) {
-            responseSet["statusCode"] = false;
-            responseSet["statusMessage"] = `@${blackListDomains[i]} is not allowed, please provide a valid corporate email address`;
-            responseSet["emailDomain"] = domainResponse["emailDomain"];
-            return responseSet;
-        }
-    }
-
-    //Preparing success response and returning it to its parent call
-    responseSet["statusCode"] = true;
-    responseSet["statusMessage"] = `@${domainResponse["emailDomain"]} is allowed`;
-    responseSet["emailDomain"] = domainResponse["emailDomain"];
-    return responseSet;
-};
-
-//To obtain email domain for evaluating office domain
-export const getEmailDomain = async (email: string) => {
-
-    //To check whether the provided data in in valid email format or not
-    let isEmail = await this.checkEmailFormat(email);
-    let responseSet: any = {};
-
-    //Checking returing isEmail reponse statusCode to validate email status
-    //Handling if only since else will always be true, hence capturing false flag only
-
-    if (!isEmail["statusCode"]) {
-        return isEmail;
-    }
-
-    //To obtain email domain
-    try {
-        let currentDomain: string = email.substring(email.lastIndexOf("@") + 1);
-        responseSet["statusCode"] = true;
-        responseSet["statusMessage"] = "Email format is valid";
-        responseSet["emailDomain"] = currentDomain;
-        return responseSet;
-    } catch (error) {
-        responseSet["statusCode"] = false;
-        responseSet["statusMessage"] = "Unable to get email domain";
-        return responseSet;
-    }
 };
 
 //To obtain email domain for evaluating office domain
