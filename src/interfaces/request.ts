@@ -1,4 +1,4 @@
-import * as Hapi from 'hapi';
+import * as Hapi from "hapi";
 
 export interface ICredentials extends Hapi.AuthCredentials {
   id: string;

@@ -11,7 +11,7 @@
         "label-position": true,
         "max-line-length": [
             true,
-            140
+            800
         ],
         "no-arg": true,
         "no-bitwise": true,
